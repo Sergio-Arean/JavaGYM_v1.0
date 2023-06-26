@@ -1,0 +1,496 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
+package UI;
+
+
+import UI.UtilidadesUI.CentradorDeColumna;
+import excepciones.NoEncontradoException;
+import java.awt.Image;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
+import model.ActivYrutina.Actividad;
+import model.Enum.EGrupoSanguineo;
+import model.Enum.EdiaSemana;
+import model.Enum.Eestado;
+import model.Enum.EtipoActividad;
+import model.Otros.Gimnasio;
+//import model.Otros.PermisoInvalidoException;
+import model.Personal.Usuario;
+import model.Persona.*;
+import model.Personal.Instructor;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ *
+ * @author sergi
+ */
+public class PanelStaff extends javax.swing.JPanel {
+
+    /**
+     * Creates new form PanelClientes
+     */
+      private Gimnasio gimnasio;
+      private Usuario usuario;
+     private TableRowSorter <DefaultTableModel> sorter; //esto permite realizar el filtrado en la tabla
+     
+     //Prueba para poder actualizar clientes
+     private ArrayList<Instructor> instructores; //arraylist que se carga con el metodo obtenerclientes
+     
+     
+    public PanelStaff(Usuario usuario, Gimnasio gimnasio) {
+        initComponents();
+        
+        this.gimnasio = gimnasio;
+        this.usuario = usuario;
+       // System.out.println("antes de cargar tabla");
+        instructores = ObtenerStaff(); //desde aca el arraylist es cargado
+        CargarTabla(instructores);
+        //btnCobrar.putClientProperty( "JButton.buttonType", "roundRect" );
+        btnAgregarComentario.putClientProperty( "JButton.buttonType", "roundRect" );
+
+        
+    }
+    
+
+     private void pintarImagen(JLabel lbl, String ruta){
+ImageIcon imagen = new ImageIcon(ruta);
+Icon icono = new ImageIcon (imagen.getImage().getScaledInstance(
+	lbl.getWidth(),
+	lbl.getHeight(),
+	Image.SCALE_DEFAULT
+        )
+	);lbl.setIcon(icono);
+	this.repaint();
+ 
+ }
+
+
+    private void CargarTabla(ArrayList<Instructor> instructores) {
+
+        DefaultTableModel model = (DefaultTableModel) tablaObjetos.getModel();
+        model.setRowCount(0);
+
+        JTable jTableClientes = tablaObjetos;
+
+        DefaultTableModel modeloTabla = new DefaultTableModel();
+        modeloTabla.addColumn("Nombre");
+        modeloTabla.addColumn("Dni");
+        modeloTabla.addColumn("Género");
+
+        for (Instructor instructor : instructores) {
+            Object[] fila = {instructor.getNombre(), instructor.getDni(), instructor.getGenero().name()};
+            modeloTabla.addRow(fila);
+
+        }
+
+        jTableClientes.setModel(modeloTabla);
+
+        TableColumnModel columnModel = jTableClientes.getColumnModel();
+
+        int columnIndex = 0;
+        TableColumn column = columnModel.getColumn(columnIndex);
+
+        int preferredWidth = 100;
+        column.setPreferredWidth(preferredWidth);
+
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            TableColumn columna_a_centrar = columnModel.getColumn(i);
+            columna_a_centrar.setCellRenderer(new CentradorDeColumna());
+
+        }
+
+        jTableClientes.setAutoCreateRowSorter(true);
+        sorter = new TableRowSorter<>(modeloTabla);
+        jTableClientes.setRowSorter(sorter);
+
+        tablaObjetos.setDefaultEditor(Object.class, null);
+
+    }
+
+
+    
+    private ArrayList<Instructor> ObtenerStaff(){
+        String json_instructores= gimnasio.CompartirDatosInstructores();
+        ArrayList <Instructor> instructores = new ArrayList<>();
+        try {
+            JSONArray jsonArray_clientes = new JSONArray(json_instructores);
+            for(int i=0; i<jsonArray_clientes.length();i++){
+                Instructor instructor = new Instructor();
+                instructor = instructor.fromJson(jsonArray_clientes.getJSONObject(i));
+                instructores.add(instructor);
+            }}catch(JSONException e){
+                    Utilidades.MostrarMensajeInformativo(e.getMessage());
+                    }
+        return instructores;
+        
+    }
+    
+                             
+    private void filtrar(){
+       sorter.setRowFilter(RowFilter.regexFilter("(?i)"+tfFiltroBusqueda.getText()));
+    }
+
+
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+
+    public PanelStaff() {
+    }
+// @SuppressWarnings("unchecked"); //esto esta comentaado por mi
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        background = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaObjetos = new javax.swing.JTable();
+        btnAgregar = new javax.swing.JButton();
+        lblInfoAdicional = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        taInfoAdicional = new javax.swing.JTextArea();
+        btnAgregarComentario = new javax.swing.JButton();
+        tfFiltroBusqueda = new javax.swing.JTextField();
+        btnModificar = new javax.swing.JButton();
+        btnBorrar = new javax.swing.JButton();
+
+        setPreferredSize(new java.awt.Dimension(757, 347));
+
+        background.setMaximumSize(new java.awt.Dimension(915, 347));
+        background.setMinimumSize(new java.awt.Dimension(915, 347));
+
+        tablaObjetos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaObjetos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tablaObjetos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaObjetosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablaObjetos);
+        if (tablaObjetos.getColumnModel().getColumnCount() > 0) {
+            tablaObjetos.getColumnModel().getColumn(0).setResizable(false);
+            tablaObjetos.getColumnModel().getColumn(1).setResizable(false);
+            tablaObjetos.getColumnModel().getColumn(2).setResizable(false);
+            tablaObjetos.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
+
+        lblInfoAdicional.setText("Información Adicional");
+
+        taInfoAdicional.setEditable(false);
+        taInfoAdicional.setColumns(20);
+        taInfoAdicional.setRows(5);
+        jScrollPane2.setViewportView(taInfoAdicional);
+
+        btnAgregarComentario.setText("+");
+        btnAgregarComentario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarComentarioActionPerformed(evt);
+            }
+        });
+
+        tfFiltroBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfFiltroBusquedaActionPerformed(evt);
+            }
+        });
+        tfFiltroBusqueda.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tfFiltroBusquedaKeyReleased(evt);
+            }
+        });
+
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+
+        btnBorrar.setText("Borrar");
+        btnBorrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout backgroundLayout = new javax.swing.GroupLayout(background);
+        background.setLayout(backgroundLayout);
+        backgroundLayout.setHorizontalGroup(
+            backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundLayout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                    .addComponent(tfFiltroBusqueda))
+                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addGap(72, 72, 72)
+                        .addComponent(lblInfoAdicional)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAgregarComentario))
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(backgroundLayout.createSequentialGroup()
+                .addGap(126, 126, 126)
+                .addComponent(btnAgregar)
+                .addGap(18, 18, 18)
+                .addComponent(btnModificar)
+                .addGap(18, 18, 18)
+                .addComponent(btnBorrar)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        backgroundLayout.setVerticalGroup(
+            backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, backgroundLayout.createSequentialGroup()
+                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblInfoAdicional)
+                            .addComponent(btnAgregarComentario)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(tfFiltroBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addGap(67, 67, 67))
+                    .addGroup(backgroundLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(backgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAgregar)
+                    .addComponent(btnModificar)
+                    .addComponent(btnBorrar))
+                .addContainerGap(40, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(background, javax.swing.GroupLayout.PREFERRED_SIZE, 757, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(background, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        // TODO add your handling code here:
+        AbrirDialogAgregarInstructor();
+        ActualizarTabla();
+
+           
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void tfFiltroBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfFiltroBusquedaKeyReleased
+        // TODO add your handling code here:
+                filtrar();
+    }//GEN-LAST:event_tfFiltroBusquedaKeyReleased
+
+    private void tfFiltroBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfFiltroBusquedaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfFiltroBusquedaActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // TODO add your handling code here:
+        ModificarInstructor();
+        ActualizarTabla();
+        taInfoAdicional.setText("");
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
+        // TODO add your handling code here:
+        BorrarInstructor();
+    }//GEN-LAST:event_btnBorrarActionPerformed
+
+    private void tablaObjetosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaObjetosMouseClicked
+        // TODO add your handling code here:
+        MostrarInfoInstructores();
+        
+    }//GEN-LAST:event_tablaObjetosMouseClicked
+
+    private void btnAgregarComentarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarComentarioActionPerformed
+        // TODO add your handling code here:
+        AbrirDialogComentarioApercibimiento();
+        tablaObjetos.clearSelection();
+    }//GEN-LAST:event_btnAgregarComentarioActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel background;
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnAgregarComentario;
+    private javax.swing.JButton btnBorrar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblInfoAdicional;
+    private javax.swing.JTextArea taInfoAdicional;
+    private javax.swing.JTable tablaObjetos;
+    private javax.swing.JTextField tfFiltroBusqueda;
+    // End of variables declaration//GEN-END:variables
+
+
+
+    
+    private void AbrirDialogComentarioApercibimiento() {
+        String dni_instructor = "";
+        int fila_seleccionada = tablaObjetos.getSelectedRow();
+        if (fila_seleccionada >= 0) {
+            dni_instructor = (String) tablaObjetos.getValueAt(fila_seleccionada, 1);
+            DialogAgregarComentario dialog_agregar_comentario = new DialogAgregarComentario(new Escritorio(usuario, gimnasio), true, dni_instructor, gimnasio);
+            dialog_agregar_comentario.setLocationRelativeTo(this);
+            dialog_agregar_comentario.setVisible(true);
+        } else {
+            Utilidades.MostrarMensajeWarning("Debe seleccionar un Instructor!");
+        }
+
+    }
+
+    private void MostrarInfoInstructores() {
+        String informacion_instructor = "";
+        String dni_instructor = "";
+        int fila_seleccionada = tablaObjetos.getSelectedRow();
+        if (fila_seleccionada >= 0) {
+            dni_instructor = (String) tablaObjetos.getValueAt(fila_seleccionada, 1);
+            informacion_instructor = gimnasio.VerActividadesInstructor(dni_instructor);
+            taInfoAdicional.setText(informacion_instructor);
+        }
+
+    }
+
+    private void ModificarInstructor() {
+        String dni_instructor = "";
+        Instructor instructor_a_modificar = null;
+        int fila_seleccionada = tablaObjetos.getSelectedRow();
+        if (fila_seleccionada >= 0) {
+
+            try {
+                dni_instructor = (String) tablaObjetos.getValueAt(fila_seleccionada, 1);
+                instructor_a_modificar = gimnasio.LocalizarInstructor(dni_instructor);
+                AbrirDialogModificarInstructor(instructor_a_modificar);
+
+            } catch (NoEncontradoException e) {
+                Utilidades.MostrarMensajeWarning(e.getMessage());
+            }
+
+        } else {
+            Utilidades.MostrarMensajeWarning("Debe seleccionar un instructor!");
+        }
+
+    }
+
+    private void AbrirDialogModificarInstructor(Instructor instructor_a_modificar) {
+        DialogModificarInstructor dialog_modificar_instructor = new DialogModificarInstructor(new Escritorio(usuario, gimnasio), true, gimnasio, instructor_a_modificar);
+        dialog_modificar_instructor.setLocationRelativeTo(this);
+        dialog_modificar_instructor.setVisible(true);
+        dialog_modificar_instructor.setSize(730, 624);
+
+    }
+
+    private void AbrirDialogAgregarInstructor() {
+        DialogAgregarInstructor dialog_agregar_instructor = new DialogAgregarInstructor(new Escritorio(usuario, gimnasio), true, gimnasio);
+        dialog_agregar_instructor.setLocationRelativeTo(this);
+        dialog_agregar_instructor.setVisible(true);
+        dialog_agregar_instructor.setSize(730, 624);
+    }
+
+    private void ActualizarTabla() {
+        instructores = ObtenerStaff(); //desde aca el arraylist es cargado
+        CargarTabla(instructores);
+    }
+
+    private void BorrarInstructor() {
+        String dni_instructor = "";
+        int fila_seleccionada = tablaObjetos.getSelectedRow();
+        if (fila_seleccionada >= 0) {
+
+            try {
+
+                dni_instructor = (String) tablaObjetos.getValueAt(fila_seleccionada, 1);
+                boolean confirmar_operacion = ConfirmarOperacion("¿Borrar Instructor?");
+                if (confirmar_operacion) {
+                    gimnasio.borrarInstructor(dni_instructor);
+                    Utilidades.MostrarMensajeInformativo("El instructor fue eliminado exitosamente");
+                    ActualizarTabla();
+                    taInfoAdicional.setText("");
+                }
+
+            } catch (NoEncontradoException e) {
+                taInfoAdicional.setText(e.getMessage());
+            }
+
+        } else {
+            Utilidades.MostrarMensajeWarning("Debe seleccionar un Instructor!");
+        }
+
+    }
+
+    private boolean ConfirmarOperacion(String texto_pregunta) {
+        boolean confirma = false;
+        String[] opciones = {"No", "Sí"};
+        int rta = JOptionPane.showOptionDialog(null, texto_pregunta, "Atención",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+                null, opciones, opciones[1]);
+
+        if (rta == 1) {
+            confirma = true;
+        }
+        return confirma;
+    }
+
+
+    
+
+    
+    
+}
